@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="rich_edit_text" type="id"/>
+    <item name="btn_bold" type="id"/>
+    <item name="btn_italic" type="id"/>
+    <item name="btn_underline" type="id"/>
+    <item name="btn_strike_through" type="id"/>
+    <item name="btn_list" type="id"/>
+    <item name="btn_bullet" type="id"/>
+</resources>

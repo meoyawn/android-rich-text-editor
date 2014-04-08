@@ -57,7 +57,6 @@ android {
 }
 
 retrolambda {
-    compile "net.orfjackal.retrolambda:retrolambda:1.+"
     jdk System.getenv("JAVA8_HOME")
     oldJdk System.getenv("JAVA7_HOME")
     javaVersion JavaVersion.VERSION_1_7

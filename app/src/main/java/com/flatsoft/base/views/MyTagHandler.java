@@ -7,6 +7,7 @@ import android.text.style.BulletSpan;
 import android.text.style.LeadingMarginSpan;
 import android.util.Log;
 
+import org.jetbrains.annotations.Nullable;
 import org.xml.sax.XMLReader;
 
 import java.util.Stack;
@@ -104,7 +105,7 @@ public class MyTagHandler implements Html.TagHandler {
 
     private static void end(Editable text, Class<?> kind, Object... replaces) {
         int len = text.length();
-        Object obj = getLast(text, kind);
+        @Nullable Object obj = getLast(text, kind);
         int where = text.getSpanStart(obj);
         text.removeSpan(obj);
         if (where != len) {
@@ -114,7 +115,7 @@ public class MyTagHandler implements Html.TagHandler {
         }
     }
 
-    private static Object getLast(Spanned text, Class<?> kind) {
+    @Nullable private static Object getLast(Spanned text, Class<?> kind) {
         /*
          * This knows that the last returned object from getSpans()
 		 * will be the most recently added.
@@ -129,5 +130,4 @@ public class MyTagHandler implements Html.TagHandler {
     private static class Ul {}
 
     private static class Ol {}
-
 }

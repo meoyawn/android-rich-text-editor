@@ -9,7 +9,6 @@ import android.text.style.AlignmentSpan;
 import android.text.style.CharacterStyle;
 import android.text.style.ForegroundColorSpan;
 import android.text.style.ImageSpan;
-import android.text.style.LeadingMarginSpan;
 import android.text.style.ParagraphStyle;
 import android.text.style.QuoteSpan;
 import android.text.style.StrikethroughSpan;
@@ -19,9 +18,6 @@ import android.text.style.SuperscriptSpan;
 import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
-
-import com.flatsoft.base.text.ListSpan;
-import com.flatsoft.base.text.ParaBulletSpan;
 
 /**
  * Created by adel on 12/04/14
@@ -43,6 +39,7 @@ public class SpannedHtml {
             String elements = " ";
             boolean needDiv = false;
 
+            boolean list = false;
             for (ParagraphStyle aStyle : style) {
                 if (aStyle instanceof AlignmentSpan) {
                     Layout.Alignment align =
@@ -55,39 +52,28 @@ public class SpannedHtml {
                     } else {
                         elements = "align=\"left\" " + elements;
                     }
+                } else if (aStyle instanceof ParaBulletSpan) {
+                    out.append("<ul>\n");
+                    withinListItem(out, text, text.getSpanStart(aStyle), text.getSpanEnd(aStyle));
+                    out.append("</ul>\n");
+                    list = true;
+                } else if (aStyle instanceof ListSpan) {
+                    out.append("<ol>\n");
+                    withinListItem(out, text, text.getSpanStart(aStyle), text.getSpanEnd(aStyle));
+                    out.append("</ol>\n");
+                    list = true;
                 }
             }
-            if (needDiv) {
-                out.append("<div ").append(elements).append(">");
-            }
 
-            withinDiv(out, text, i, next);
+            if (!list) {
+                if (needDiv) {
+                    out.append("<div ").append(elements).append(">");
+                }
 
-            if (needDiv) {
-                out.append("</div>");
-            }
-        }
-    }
+                withinDiv(out, text, i, next);
 
-    private static void withinDiv(StringBuilder out, Spanned text,
-                                  int start, int end) {
-        int next;
-        for (int i = start; i < end; i = next) {
-            next = text.nextSpanTransition(i, end, LeadingMarginSpan.class);
-            LeadingMarginSpan[] quotes = text.getSpans(i, next, LeadingMarginSpan.class);
-            for (LeadingMarginSpan quote : quotes) {
-                if (quote instanceof QuoteSpan) {
-                    out.append("<blockquote>");
-                    withinBlockquote(out, text, i, next);
-                    out.append("</blockquote>\n");
-                } else if (quote instanceof ParaBulletSpan) {
-                    out.append("<ul>\n");
-                    withinListItem(out, text, i, next);
-                    out.append("</ul>\n");
-                } else if (quote instanceof ListSpan) {
-                    out.append("<ol>\n");
-                    withinListItem(out, text, i, next);
-                    out.append("</ol>\n");
+                if (needDiv) {
+                    out.append("</div>");
                 }
             }
         }
@@ -101,8 +87,28 @@ public class SpannedHtml {
                 next = end;
             }
             out.append("<li>");
+            withinParagraph(out, text, i, next, 0, true);
+            out.append("</li>");
+            next++;
+        }
+    }
+
+    private static void withinDiv(StringBuilder out, Spanned text,
+                                  int start, int end) {
+        int next;
+        for (int i = start; i < end; i = next) {
+            next = text.nextSpanTransition(i, end, QuoteSpan.class);
+            QuoteSpan[] quotes = text.getSpans(i, next, QuoteSpan.class);
+
+            for (QuoteSpan quote : quotes) {
+                out.append("<blockquote>");
+            }
+
             withinBlockquote(out, text, i, next);
-            out.append("</li>\n");
+
+            for (QuoteSpan quote : quotes) {
+                out.append("</blockquote>\n");
+            }
         }
     }
 

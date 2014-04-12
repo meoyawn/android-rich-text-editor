@@ -8,11 +8,12 @@ import android.widget.FrameLayout;
 
 import com.flatsoft.base.R;
 import com.flatsoft.base.effects.Bold;
-import com.flatsoft.base.effects.Bullet;
 import com.flatsoft.base.effects.Effect;
 import com.flatsoft.base.effects.Italic;
+import com.flatsoft.base.effects.OrderedList;
 import com.flatsoft.base.effects.StrikeThrough;
 import com.flatsoft.base.effects.Underline;
+import com.flatsoft.base.effects.UnorderedList;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -51,8 +52,10 @@ public class RichTextEditor extends FrameLayout {
                     toggle(underlineButton, active);
                 } else if (effect instanceof StrikeThrough) {
                     toggle(strikeThroughButton, active);
-                } else if (effect instanceof Bullet) {
+                } else if (effect instanceof UnorderedList) {
                     toggle(bulletButton, active);
+                } else if (effect instanceof OrderedList) {
+                    toggle(listButton, active);
                 }
             });
         }
@@ -75,10 +78,11 @@ public class RichTextEditor extends FrameLayout {
     }
 
     @OnClick(R.id.btn_list) void onListClick(Button button) {
+        editText.toggleOnCurrentSelection(Effect.ORDERED_LIST);
     }
 
     @OnClick(R.id.btn_bullet) void onBulletClick(Button button) {
-        editText.toggleOnCurrentSelection(Effect.BULLET);
+        editText.toggleOnCurrentSelection(Effect.UNORDERED_LIST);
     }
 
     static void toggle(Button button, boolean active) {

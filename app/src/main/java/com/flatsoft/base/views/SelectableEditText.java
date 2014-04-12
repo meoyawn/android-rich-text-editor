@@ -3,17 +3,15 @@ package com.flatsoft.base.views;
 import android.content.Context;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
-import android.text.style.MyBulletSpan;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
-import com.flatsoft.base.effects.Bullet;
 import com.flatsoft.base.effects.Effect;
+import com.flatsoft.base.effects.ParagraphEffect;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.List;
 import java.util.regex.Pattern;
 
 import lombok.AllArgsConstructor;
@@ -25,11 +23,9 @@ import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 import timber.log.Timber;
 
-import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.text.Spanned.SPAN_EXCLUSIVE_INCLUSIVE;
 import static android.text.Spanned.SPAN_INCLUSIVE_EXCLUSIVE;
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
-import static com.flatsoft.base.effects.Effect.BULLET;
 
 /**
  * Created by adel on 08/04/14
@@ -71,7 +67,17 @@ public class SelectableEditText extends EditText {
     }
 
     static int paragraphStart(String string, int position) {
-        return string.lastIndexOf("\n", position) + 1;
+        int lastIndex = string.lastIndexOf("\n", string.length() > position && string.charAt(position) != '\n' ?
+                position :
+                position - 1);
+        return lastIndex < position ?
+                lastIndex + 1 :
+                position;
+    }
+
+    static int paragraphEnd(String string, int position) {
+        int indexOf = string.indexOf("\n", position);
+        return indexOf != -1 ? indexOf : string.length();
     }
 
     public <T> void toggleOnCurrentSelection(Effect<T> effect) {
@@ -79,19 +85,32 @@ public class SelectableEditText extends EditText {
         int selEnd = getSelectionEnd();
         Editable text = getText();
 
+        if (effect instanceof ParagraphEffect) {
+            String fullText = text.toString();
+            selStart = paragraphStart(fullText, selStart);
+            selEnd = paragraphEnd(fullText, selEnd);
+
+            int min = Math.min(selStart, selEnd);
+            int max = Math.max(selStart, selEnd);
+            selStart = min;
+            selEnd = max;
+        }
+
         T[] spans = text.getSpans(selStart, selEnd, effect.clazz());
         if (forSome(spans, effect::appliesTo)) {
             for (T span : spans) {
                 if (effect.appliesTo(span)) {
-                    if (!(effect instanceof Bullet)) {
-                        int start = text.getSpanStart(span);
-                        if (start < selStart) {
-                            text.setSpan(effect.newInstance(), start, selStart, SPAN_EXCLUSIVE_EXCLUSIVE);
-                        }
+                    int start = text.getSpanStart(span);
+                    if (start < selStart) {
+                        text.setSpan(effect.newInstance(), start, selStart, SPAN_INCLUSIVE_EXCLUSIVE);
+                    }
 
-                        int end = text.getSpanEnd(span);
-                        if (end > selEnd) {
-                            text.setSpan(effect.newInstance(), selEnd, end, SPAN_EXCLUSIVE_EXCLUSIVE);
+                    int end = text.getSpanEnd(span);
+                    if (end > selEnd) {
+                        if (text.charAt(selEnd) == '\n') {
+                            text.setSpan(effect.newInstance(), selEnd + 1, end, SPAN_INCLUSIVE_INCLUSIVE);
+                        } else {
+                            text.setSpan(effect.newInstance(), selEnd, end, SPAN_EXCLUSIVE_INCLUSIVE);
                         }
                     }
 
@@ -99,54 +118,10 @@ public class SelectableEditText extends EditText {
                 }
             }
         } else {
-            if (effect instanceof Bullet) {
-                String fullText = text.toString();
-                int paragraphStart = paragraphStart(fullText, selStart);
-                if (selStart != selEnd) {
-                    String[] paragraphs = NEW_LINE.split(text.subSequence(paragraphStart, selEnd));
-                    int lastStart = paragraphStart;
-                    for (String paragraph : paragraphs) {
-                        int start = fullText.indexOf(paragraph, lastStart);
-                        int end = start + paragraph.length();
-                        if (end > selEnd) {
-                            break;
-                        }
-                        text.setSpan(effect.newInstance(), start, end, SPAN_EXCLUSIVE_EXCLUSIVE);
-                        lastStart = end;
-                    }
-                } else {
-                    text.setSpan(effect.newInstance(), paragraphStart, selEnd, SPAN_EXCLUSIVE_INCLUSIVE);
-                }
-            } else if (effect instanceof List) {
-                // TODO
-            } else {
-                int flag = selStart != selEnd ? SPAN_EXCLUSIVE_INCLUSIVE : SPAN_INCLUSIVE_INCLUSIVE;
-                text.setSpan(effect.newInstance(), selStart, selEnd, flag);
-            }
+            text.setSpan(effect.newInstance(), selStart, selEnd, SPAN_INCLUSIVE_INCLUSIVE);
         }
 
         onSelectionChanged(selStart, selEnd);
-    }
-
-    @Override
-    protected void onTextChanged(CharSequence text, int start, int lengthBefore, int lengthAfter) {
-        int end = start + lengthAfter;
-        String change = String.valueOf(text.subSequence(start, end));
-        if (end - start == 1) {
-            Editable editable = getText();
-            MyBulletSpan[] spans = editable.getSpans(start, start, BULLET.clazz());
-            if (change.equals("\n") && spans.length > 0) {
-                Timber.d("has %d spans", spans.length);
-                MyBulletSpan span = spans[0];
-                int editableStart = editable.getSpanStart(span);
-                int editableEnd = editable.getSpanEnd(span);
-                editable.removeSpan(span);
-                editable.setSpan(BULLET.newInstance(), editableStart, editableEnd - 1, SPAN_INCLUSIVE_EXCLUSIVE);
-                editable.setSpan(BULLET.newInstance(), end, end, SPAN_INCLUSIVE_EXCLUSIVE);
-            }
-        } else {
-
-        }
     }
 
     @Override @NotNull public Editable getText() {
@@ -171,7 +146,7 @@ public class SelectableEditText extends EditText {
         return true;
     }
 
-    static <T> boolean forSome(T[] array, Func1<T, Boolean> func1) {
+    public static <T> boolean forSome(T[] array, Func1<T, Boolean> func1) {
         for (T item : array) {
             if (func1.call(item)) {
                 return true;

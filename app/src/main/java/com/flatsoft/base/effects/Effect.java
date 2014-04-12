@@ -8,8 +8,9 @@ public interface Effect<T> {
     public static final Italic        ITALIC         = new Italic();
     public static final Underline     UNDERLINE      = new Underline();
     public static final StrikeThrough STRIKE_THROUGH = new StrikeThrough();
-    public static final Bullet        BULLET         = new Bullet(10);
-    public static final Effect[]      EFFECTS        = {BOLD, ITALIC, UNDERLINE, STRIKE_THROUGH, BULLET};
+    public static final OrderedList   ORDERED_LIST   = new OrderedList(10);
+    public static final UnorderedList UNORDERED_LIST = new UnorderedList(10);
+    public static final Effect[]      EFFECTS        = {BOLD, ITALIC, UNDERLINE, STRIKE_THROUGH, ORDERED_LIST, UNORDERED_LIST};
 
     Class<T> clazz();
 

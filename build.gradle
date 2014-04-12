@@ -21,6 +21,7 @@ buildscript {
 allprojects {
     repositories {
         mavenCentral()
+        maven { url "http://repo.pageturner-reader.org" }
     }
 }
 

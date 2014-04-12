@@ -21,7 +21,9 @@ android {
 
     packagingOptions {
         exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
         exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
         exclude 'META-INF/services/javax.annotation.processing.Processor'
     }
 
@@ -44,9 +46,10 @@ retrolambda {
 }
 
 dependencies {
-    compile 'com.netflix.rxjava:rxjava-android:0.17.+' // FRP
-    compile 'com.jakewharton:butterknife:4.+' // view injection
-    compile 'com.jakewharton.timber:timber:2.+' // logging
-    compile 'com.intellij:annotations:12.+' // @Nullable @NotNull
-    compile 'org.projectlombok:lombok:1.+' // POJO boilerplate
+    compile 'com.netflix.rxjava:rxjava-android:0.17.+'
+    compile 'com.jakewharton:butterknife:4.+'
+    compile 'com.jakewharton.timber:timber:2.+'
+    compile 'com.intellij:annotations:12.+'
+    compile 'org.projectlombok:lombok:1.+'
+    compile 'com.android.support:support-v4:19.+'
 }

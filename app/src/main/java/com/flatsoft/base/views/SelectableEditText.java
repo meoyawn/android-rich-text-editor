@@ -1,10 +1,9 @@
 package com.flatsoft.base.views;
 
 import android.content.Context;
-import android.content.res.Resources;
 import android.text.Editable;
 import android.text.SpannableStringBuilder;
-import android.text.style.BulletSpan;
+import android.text.style.MyBulletSpan;
 import android.util.AttributeSet;
 import android.widget.EditText;
 
@@ -30,6 +29,7 @@ import static android.text.Spanned.SPAN_EXCLUSIVE_EXCLUSIVE;
 import static android.text.Spanned.SPAN_EXCLUSIVE_INCLUSIVE;
 import static android.text.Spanned.SPAN_INCLUSIVE_EXCLUSIVE;
 import static android.text.Spanned.SPAN_INCLUSIVE_INCLUSIVE;
+import static com.flatsoft.base.effects.Effect.BULLET;
 
 /**
  * Created by adel on 08/04/14
@@ -43,15 +43,6 @@ public class SelectableEditText extends EditText {
 
     public SelectableEditText(Context context, AttributeSet attrs) {
         super(context, attrs);
-    }
-
-    @NotNull @Override public Resources getResources() {
-        Resources resources = super.getResources();
-        if (resources != null) {
-            return resources;
-        } else {
-            throw new NullPointerException();
-        }
     }
 
     @Override protected void onFinishInflate() {
@@ -142,16 +133,16 @@ public class SelectableEditText extends EditText {
         int end = start + lengthAfter;
         String change = String.valueOf(text.subSequence(start, end));
         if (end - start == 1) {
-            Class<BulletSpan> bulletSpanClass = Effect.BULLET.clazz();
-
             Editable editable = getText();
-            BulletSpan[] spans = editable.getSpans(start, start, bulletSpanClass);
+            MyBulletSpan[] spans = editable.getSpans(start, start, BULLET.clazz());
             if (change.equals("\n") && spans.length > 0) {
                 Timber.d("has %d spans", spans.length);
-                BulletSpan[] editableSpans = editable.getSpans(end, end, bulletSpanClass);
-                int editableStart = editable.getSpanStart(editableSpans[0]);
-                int editableEnd = editable.getSpanEnd(editableSpans[0]);
-                editable.setSpan(Effect.BULLET.newInstance(), end, end, SPAN_INCLUSIVE_EXCLUSIVE);
+                MyBulletSpan span = spans[0];
+                int editableStart = editable.getSpanStart(span);
+                int editableEnd = editable.getSpanEnd(span);
+                editable.removeSpan(span);
+                editable.setSpan(BULLET.newInstance(), editableStart, editableEnd - 1, SPAN_INCLUSIVE_EXCLUSIVE);
+                editable.setSpan(BULLET.newInstance(), end, end, SPAN_INCLUSIVE_EXCLUSIVE);
             }
         } else {
 

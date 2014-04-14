@@ -1,6 +1,7 @@
 package com.flatsoft.base.text;
 
 import android.graphics.Typeface;
+import android.text.Html;
 import android.text.Layout;
 import android.text.Spanned;
 import android.text.TextUtils;
@@ -19,10 +20,16 @@ import android.text.style.TypefaceSpan;
 import android.text.style.URLSpan;
 import android.text.style.UnderlineSpan;
 
+import com.flatsoft.base.views.MyTagHandler;
+
 /**
  * Created by adel on 12/04/14
  */
 public class SpannedHtml {
+    public static Spanned fromHtml(String text) {
+        return Html.fromHtml(text, null, new MyTagHandler());
+    }
+
     public static String toHtml(Spanned text) {
         StringBuilder out = new StringBuilder();
         withinHtml(out, text);

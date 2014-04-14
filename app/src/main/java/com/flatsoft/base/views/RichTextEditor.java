@@ -14,6 +14,7 @@ import com.flatsoft.base.effects.OrderedList;
 import com.flatsoft.base.effects.StrikeThrough;
 import com.flatsoft.base.effects.Underline;
 import com.flatsoft.base.effects.UnorderedList;
+import com.flatsoft.base.text.SpannedHtml;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
@@ -59,6 +60,15 @@ public class RichTextEditor extends FrameLayout {
                 }
             });
         }
+
+        editText.setText(SpannedHtml.fromHtml("<ul>\n" +
+                "<li>first</li>\n" +
+                "<li>second</li>\n" +
+                "</ul>\n" +
+                "<ol>\n" +
+                "<li>first</li>\n" +
+                "<li>second</li>\n" +
+                "</ol>"));
     }
 
     @OnClick(R.id.btn_bold) void onBoldClick(Button button) {

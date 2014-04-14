@@ -11,8 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import butterknife.ButterKnife;
@@ -22,7 +22,10 @@ import butterknife.InjectView;
  * Created by adelnizamutdinov on 03/03/2014
  */
 public class MainFragment extends Fragment {
-    @NotNull @InjectView(R.id.rich_edit_text) WebView webView;
+    static final String JAVASCRIPT = "javascript:";
+    static final String EDITOR_URL = "file:///android_asset/editor.html";
+
+    @InjectView(R.id.rich_edit_text) WebView webView;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -39,10 +42,25 @@ public class MainFragment extends Fragment {
         ButterKnife.inject(this, view);
         webView.getSettings().setJavaScriptEnabled(true);
         webView.addJavascriptInterface(new Android(), "android");
-        webView.loadUrl("file:///android_asset/index.html");
+
+        webView.setWebViewClient(new WebViewClient() {
+            @Override public void onPageFinished(WebView view, String url) {
+                switch (url) {
+                    case EDITOR_URL:
+                        String html = "<ul>\n" +
+                                "<li>first</li>\n" +
+                                "<li>second</li>\n" +
+                                "</ul>";
+                        webView.loadUrl(js("setHtml(" + html + ")"));
+                        break;
+                }
+            }
+        });
+
+        webView.loadUrl(EDITOR_URL);
     }
 
-    public class Android {
+    class Android {
         @JavascriptInterface public void giveHtml(String html) {
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
@@ -58,9 +76,13 @@ public class MainFragment extends Fragment {
         super.onCreateOptionsMenu(menu, inflater);
         menu.add("HTML")
                 .setOnMenuItemClickListener(item -> {
-                    webView.loadUrl("javascript:getHtml();");
+                    webView.loadUrl(js("getHtml()"));
                     return true;
                 })
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
+    }
+
+    static String js(String code) {
+        return "javascript:" + code + ";";
     }
 }

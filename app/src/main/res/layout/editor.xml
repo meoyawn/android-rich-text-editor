@@ -9,15 +9,11 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <com.flatsoft.base.views.SelectableEditText
-            android:id="@id/rich_edit_text"
-            android:background="@android:color/transparent"
+        <WebView
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:hint="awdaw"
-            android:gravity="top|left"
-            android:inputType="textMultiLine"/>
+            android:id="@id/rich_edit_text"/>
 
         <LinearLayout
             android:layout_width="match_parent"

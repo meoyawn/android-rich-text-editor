@@ -28,7 +28,13 @@ public class ListSpan implements LeadingMarginSpan {
             count = 0;
         }
 
-        c.drawText(++count + ".", x, baseline, p);
+        c.save();
+        try {
+            c.drawText(++count + ".", x, baseline, p);
+            c.translate(gapWidth / 2f, 0);
+        } finally {
+            c.restore();
+        }
 
         if (textWidth == 0f) {
             textWidth = p.measureText("55.");

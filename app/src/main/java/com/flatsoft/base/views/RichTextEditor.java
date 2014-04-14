@@ -82,7 +82,7 @@ public class RichTextEditor extends FrameLayout {
     }
 
     @OnClick(R.id.btn_bullet) void onBulletClick(Button button) {
-        editText.toggleOnCurrentSelection(Effect.UNORDERED_LIST);
+        editText.toggleOnCurrentSelection(Effect.BULLET_EFFECT);
     }
 
     static void toggle(Button button, boolean active) {

@@ -2,9 +2,9 @@ package com.flatsoft.base;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.text.Editable;
-import android.text.Html;
 import android.text.style.BackgroundColorSpan;
 import android.text.style.ParagraphStyle;
 import android.view.LayoutInflater;
@@ -21,8 +21,11 @@ import com.flatsoft.base.views.SelectableEditText;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Random;
+
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import timber.log.Timber;
 
 import static com.flatsoft.base.views.SelectableEditText.forSome;
 
@@ -76,7 +79,12 @@ public class MainFragment extends Fragment {
                                 int start = text.getSpanStart(o);
                                 int end = text.getSpanEnd(o);
                                 int flags = text.getSpanFlags(o);
-                                text.setSpan(new BackgroundColorSpan(System.identityHashCode(o)), start, end, flags);
+
+                                Random rnd = new Random();
+                                int color = Color.argb(255, rnd.nextInt(256), rnd.nextInt(256), rnd.nextInt(256));
+                                text.setSpan(new BackgroundColorSpan(color), start, end, flags);
+
+                                Timber.d("span: %s from %d to %d", o.getClass().getSimpleName(), start, end);
                             }
                         }
                     }

@@ -52,7 +52,7 @@ public class SpannedHtml {
                     } else {
                         elements = "align=\"left\" " + elements;
                     }
-                } else if (aStyle instanceof ParaBulletSpan) {
+                } else if (aStyle instanceof MyBulletSpan) {
                     out.append("<ul>\n");
                     withinListItem(out, text, text.getSpanStart(aStyle), text.getSpanEnd(aStyle));
                     out.append("</ul>\n");

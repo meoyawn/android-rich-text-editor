@@ -9,34 +9,34 @@ import android.text.Layout;
 import android.text.ParcelableSpan;
 import android.text.style.LeadingMarginSpan;
 
-public class ParaBulletSpan implements LeadingMarginSpan, ParcelableSpan {
+public class MyBulletSpan implements LeadingMarginSpan, ParcelableSpan {
     private final int     mGapWidth;
     private final boolean mWantColor;
     private final int     mColor;
 
-    private static final int  BULLET_RADIUS      = 3;
+    private static final int  BULLET_RADIUS      = 5;
     private static       Path sBulletPath        = null;
     public static final  int  STANDARD_GAP_WIDTH = 2;
 
-    public ParaBulletSpan() {
+    public MyBulletSpan() {
         mGapWidth = STANDARD_GAP_WIDTH;
         mWantColor = false;
         mColor = 0;
     }
 
-    public ParaBulletSpan(int gapWidth) {
+    public MyBulletSpan(int gapWidth) {
         mGapWidth = gapWidth;
         mWantColor = false;
         mColor = 0;
     }
 
-    public ParaBulletSpan(int gapWidth, int color) {
+    public MyBulletSpan(int gapWidth, int color) {
         mGapWidth = gapWidth;
         mWantColor = true;
         mColor = color;
     }
 
-    public ParaBulletSpan(Parcel src) {
+    public MyBulletSpan(Parcel src) {
         mGapWidth = src.readInt();
         mWantColor = src.readInt() != 0;
         mColor = src.readInt();
@@ -57,7 +57,7 @@ public class ParaBulletSpan implements LeadingMarginSpan, ParcelableSpan {
     }
 
     public int getLeadingMargin(boolean first) {
-        return 5 * mGapWidth + 2 * BULLET_RADIUS + mGapWidth;
+        return 4 * mGapWidth + 2 * BULLET_RADIUS + mGapWidth;
     }
 
     public void drawLeadingMargin(Canvas c, Paint p, int x, int dir,
@@ -82,11 +82,11 @@ public class ParaBulletSpan implements LeadingMarginSpan, ParcelableSpan {
             }
 
             c.save();
-            c.translate(5 * mGapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f);
+            c.translate(4 * mGapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f);
             c.drawPath(sBulletPath, p);
             c.restore();
         } else {
-            c.drawCircle(5 * mGapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f, BULLET_RADIUS, p);
+            c.drawCircle(4 * mGapWidth + x + dir * BULLET_RADIUS, (top + bottom) / 2.0f, BULLET_RADIUS, p);
         }
 
         if (mWantColor) {

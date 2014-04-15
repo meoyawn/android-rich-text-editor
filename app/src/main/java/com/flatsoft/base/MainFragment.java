@@ -21,11 +21,14 @@ import butterknife.InjectView;
  * Created by adelnizamutdinov on 03/03/2014
  */
 public class MainFragment extends Fragment {
-    @InjectView(R.id.rich_editor) RichTextEditor richTextEditor;
+    @Nullable @InjectView(R.id.rich_editor) RichTextEditor richTextEditor;
+
+    @Nullable String html;
 
     @Override public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
+        setRetainInstance(true);
     }
 
     @Nullable @Override
@@ -38,17 +41,32 @@ public class MainFragment extends Fragment {
         ButterKnife.inject(this, view);
     }
 
+    @Override public void onDestroyView() {
+        if (richTextEditor != null) {
+            richTextEditor.getHtml(html -> {
+                this.html = html;
+                if (richTextEditor != null) {
+                    richTextEditor.setHtml(html);
+                }
+            });
+        }
+        ButterKnife.reset(this);
+        super.onDestroyView();
+    }
+
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.add("HTML")
                 .setOnMenuItemClickListener(item -> {
-                    richTextEditor.getHtml(html -> {
-                        if (getActivity() != null) {
-                            new AlertDialog.Builder(getActivity())
-                                    .setMessage(html)
-                                    .show();
-                        }
-                    });
+                    if (richTextEditor != null) {
+                        richTextEditor.getHtml(html -> {
+                            if (getActivity() != null) {
+                                new AlertDialog.Builder(getActivity())
+                                        .setMessage(html)
+                                        .show();
+                            }
+                        });
+                    }
                     return true;
                 })
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);

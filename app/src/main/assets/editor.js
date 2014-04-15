@@ -1,13 +1,18 @@
+function editor() {
+    return document.getElementById('editor');
+}
+
 function getHtml() {
-    android.giveHtml(document.body.innerHTML);
+    android.giveHtml(editor().innerHTML);
 }
 
 function setHtml(data) {
-    document.body.innerHTML = data;
+    editor().innerHTML = data;
 }
 
 function toggle(what) {
     document.execCommand(what);
+    onSelectionChanged();
 }
 
 function query(what) {
@@ -23,3 +28,12 @@ function onSelectionChanged() {
     var unordered = query('insertUnorderedList');
     android.onSelectionChanged(bold, italic, underline, strikeThrough, ordered, unordered);
 }
+
+function checkPendingJavascript() {
+    var script = android.getPendingJavaScript();
+    if (script) {
+        eval(script);
+    }
+}
+
+setInterval(checkPendingJavascript, 60);

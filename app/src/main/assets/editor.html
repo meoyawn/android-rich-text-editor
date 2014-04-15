@@ -1,8 +1,12 @@
 <html>
-<body contenteditable="true"
-      onmouseup="onSelectionChanged()"
-      onkeyup="onSelectionChanged()"
-      onselectionchange="onSelectionChanged()">
-<script src="file:///android_asset/test.js"></script>
+<body>
+<div id="editor"
+     contenteditable="true"
+     style="height:100%"
+     onfocus="android.onFocusChanged(true)"
+     onblur="android.onFocusChanged(false)"
+     onmouseup="onSelectionChanged()"
+     onkeyup="onSelectionChanged()"></div>
+<script src="file:///android_asset/editor.js"></script>
 </body>
 </html>

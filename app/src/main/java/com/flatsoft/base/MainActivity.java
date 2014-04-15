@@ -3,8 +3,6 @@ package com.flatsoft.base;
 import android.app.Activity;
 import android.os.Bundle;
 
-import timber.log.Timber;
-
 public class MainActivity extends Activity {
     @Override protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

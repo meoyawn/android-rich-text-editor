@@ -1,7 +1,5 @@
 apply plugin: 'android'
-apply plugin: 'android-apt'
 apply plugin: 'retrolambda'
-apply plugin: 'android-test'
 
 android {
     compileSdkVersion 19
@@ -48,8 +46,5 @@ retrolambda {
 dependencies {
     compile 'com.netflix.rxjava:rxjava-android:0.17.+'
     compile 'com.jakewharton:butterknife:4.+'
-    compile 'com.jakewharton.timber:timber:2.+'
     compile 'com.intellij:annotations:12.+'
-    compile 'org.projectlombok:lombok:1.+'
-    compile 'com.android.support:support-v4:19.+'
 }

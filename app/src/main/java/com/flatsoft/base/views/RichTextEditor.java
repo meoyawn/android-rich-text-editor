@@ -20,13 +20,15 @@ import org.jetbrains.annotations.Nullable;
 import butterknife.ButterKnife;
 import butterknife.InjectView;
 import butterknife.OnClick;
+import rx.Observable;
+import rx.Subscriber;
 import rx.functions.Action1;
 
 /**
  * Created by adel on 07/04/14
  */
 public class RichTextEditor extends FrameLayout {
-    @NotNull final StringBuilder pendingJs = new StringBuilder();
+    final StringBuilder pendingJs = new StringBuilder();
 
     @InjectView(R.id.rich_edit_text)     WebView webView;
     @InjectView(R.id.button_bar)         View    buttonBar;
@@ -63,6 +65,14 @@ public class RichTextEditor extends FrameLayout {
         webView.loadUrl(js("getHtml()"));
     }
 
+    @NotNull public Observable<String> getHtml() {
+        return Observable.create((Subscriber<? super String> subscriber) ->
+                getHtml(str -> {
+                    subscriber.onNext(str);
+                    subscriber.onCompleted();
+                }));
+    }
+
     public void setHtml(@NotNull String html) {
         webView.loadUrl(js("setHtml('" + html + "')"));
     }
@@ -90,6 +100,7 @@ public class RichTextEditor extends FrameLayout {
             post(() -> {
                 if (htmlCallback != null) {
                     htmlCallback.call(html);
+                    htmlCallback = null;
                 }
             });
         }

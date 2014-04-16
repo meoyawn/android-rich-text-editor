@@ -1,58 +1,53 @@
 <?xml version="1.0" encoding="utf-8"?>
-<com.flatsoft.base.views.RichTextEditor xmlns:android="http://schemas.android.com/apk/res/android"
-                                        android:id="@+id/rich_editor"
-                                        android:layout_width="match_parent"
-                                        android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:animateLayoutChanges="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
 
-    <LinearLayout
-        android:animateLayoutChanges="true"
+    <com.flatsoft.base.views.RichEditorView
+        android:id="@id/rich_edit_text"
+        android:background="@null"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
 
-        <WebView
-            android:background="@null"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@id/rich_edit_text"/>
+    <com.flatsoft.base.views.RichEditorButtons
+        android:id="@+id/button_bar"
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-        <LinearLayout
-            android:visibility="gone"
-            android:id="@+id/button_bar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal">
+        <Button
+            android:id="@id/btn_bold"
+            android:text="B"
+            style="@style/Btn"/>
 
-            <Button
-                android:id="@id/btn_bold"
-                android:text="B"
-                style="@style/Btn"/>
+        <Button
+            android:id="@id/btn_italic"
+            android:text="I"
+            style="@style/Btn"/>
 
-            <Button
-                android:id="@id/btn_italic"
-                android:text="I"
-                style="@style/Btn"/>
+        <Button
+            android:id="@id/btn_underline"
+            android:text="U"
+            style="@style/Btn"/>
 
-            <Button
-                android:id="@id/btn_underline"
-                android:text="U"
-                style="@style/Btn"/>
+        <Button
+            android:id="@id/btn_strike_through"
+            android:text="S"
+            style="@style/Btn"/>
 
-            <Button
-                android:id="@id/btn_strike_through"
-                android:text="S"
-                style="@style/Btn"/>
+        <Button
+            android:id="@id/btn_list"
+            android:text="List"
+            style="@style/Btn"/>
 
-            <Button
-                android:id="@id/btn_list"
-                android:text="List"
-                style="@style/Btn"/>
-
-            <Button
-                android:id="@id/btn_bullet"
-                android:text="Bullet"
-                style="@style/Btn"/>
-        </LinearLayout>
-    </LinearLayout>
-</com.flatsoft.base.views.RichTextEditor>
+        <Button
+            android:id="@id/btn_bullet"
+            android:text="Bullet"
+            style="@style/Btn"/>
+    </com.flatsoft.base.views.RichEditorButtons>
+</LinearLayout>

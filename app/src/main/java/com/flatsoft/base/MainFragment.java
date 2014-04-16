@@ -10,7 +10,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.flatsoft.base.views.RichTextEditor;
+import com.flatsoft.base.views.RichEditorButtons;
+import com.flatsoft.base.views.RichEditorEventBus;
+import com.flatsoft.base.views.RichEditorView;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -22,7 +24,8 @@ import rx.functions.Action1;
  * Created by adelnizamutdinov on 03/03/2014
  */
 public class MainFragment extends Fragment {
-    @Nullable @InjectView(R.id.rich_editor) RichTextEditor richTextEditor;
+    @InjectView(R.id.rich_edit_text) RichEditorView    richEditorView;
+    @InjectView(R.id.button_bar)     RichEditorButtons richEditorButtons;
 
     @Nullable String html;
 
@@ -40,19 +43,27 @@ public class MainFragment extends Fragment {
     @Override public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
         ButterKnife.inject(this, view);
+
+        RichEditorEventBus eventBus = new RichEditorEventBus();
+        richEditorView.setEventBus(eventBus);
+        richEditorButtons.setEventBus(eventBus);
+
+        richEditorView.setHtml("<ul>\n" +
+                "<li>first</li>\n" +
+                "<li>second</li>\n" +
+                "<li>third</li>\n" +
+                "</ul>");
     }
 
     @Override public void onDestroyView() {
-        if (richTextEditor != null) {
-            richTextEditor.getHtml(new Action1<String>() {
-                @Override public void call(String html) {
-                    MainFragment.this.html = html;
-                    if (richTextEditor != null) {
-                        richTextEditor.setHtml(html);
-                    }
+        richEditorView.getHtml().subscribe(new Action1<String>() {
+            @Override public void call(String html) {
+                MainFragment.this.html = html;
+                if (richEditorView != null) {
+                    richEditorView.setHtml(html);
                 }
-            });
-        }
+            }
+        });
         ButterKnife.reset(this);
         super.onDestroyView();
     }
@@ -62,8 +73,8 @@ public class MainFragment extends Fragment {
         menu.add("HTML")
                 .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
                     @Override public boolean onMenuItemClick(MenuItem item) {
-                        if (richTextEditor != null) {
-                            richTextEditor.getHtml(new Action1<String>() {
+                        if (richEditorView != null) {
+                            richEditorView.getHtml().subscribe(new Action1<String>() {
                                 @Override public void call(String html) {
                                     if (getActivity() != null) {
                                         new AlertDialog.Builder(getActivity())

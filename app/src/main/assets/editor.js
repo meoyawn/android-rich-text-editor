@@ -1,3 +1,5 @@
+/*global document,android,setInterval*/
+
 function editor() {
     return document.getElementById('editor');
 }
@@ -10,23 +12,25 @@ function setHtml(data) {
     editor().innerHTML = data;
 }
 
+var styles = [
+    'bold',
+    'italic',
+    'underline',
+    'strikeThrough',
+    'insertOrderedList',
+    'insertUnorderedList'
+];
+
+function onSelectionChanged() {
+    var i;
+    for (i = 0; i < styles.length; i += 1) {
+        android.onSelectionChanged(styles[i], document.queryCommandState(styles[i]));
+    }
+}
+
 function toggle(what) {
     document.execCommand(what);
     onSelectionChanged();
-}
-
-function query(what) {
-    return document.queryCommandState(what)
-}
-
-function onSelectionChanged() {
-    var bold = query('bold');
-    var italic = query('italic');
-    var underline = query('underline');
-    var strikeThrough = query('strikeThrough');
-    var ordered = query('insertOrderedList');
-    var unordered = query('insertUnorderedList');
-    android.onSelectionChanged(bold, italic, underline, strikeThrough, ordered, unordered);
 }
 
 function checkPendingJavascript() {

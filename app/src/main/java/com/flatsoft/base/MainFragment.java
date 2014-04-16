@@ -16,6 +16,7 @@ import org.jetbrains.annotations.Nullable;
 
 import butterknife.ButterKnife;
 import butterknife.InjectView;
+import rx.functions.Action1;
 
 /**
  * Created by adelnizamutdinov on 03/03/2014
@@ -43,10 +44,12 @@ public class MainFragment extends Fragment {
 
     @Override public void onDestroyView() {
         if (richTextEditor != null) {
-            richTextEditor.getHtml(html -> {
-                this.html = html;
-                if (richTextEditor != null) {
-                    richTextEditor.setHtml(html);
+            richTextEditor.getHtml(new Action1<String>() {
+                @Override public void call(String html) {
+                    MainFragment.this.html = html;
+                    if (richTextEditor != null) {
+                        richTextEditor.setHtml(html);
+                    }
                 }
             });
         }
@@ -57,17 +60,21 @@ public class MainFragment extends Fragment {
     @Override public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
         super.onCreateOptionsMenu(menu, inflater);
         menu.add("HTML")
-                .setOnMenuItemClickListener(item -> {
-                    if (richTextEditor != null) {
-                        richTextEditor.getHtml(html -> {
-                            if (getActivity() != null) {
-                                new AlertDialog.Builder(getActivity())
-                                        .setMessage(html)
-                                        .show();
-                            }
-                        });
+                .setOnMenuItemClickListener(new MenuItem.OnMenuItemClickListener() {
+                    @Override public boolean onMenuItemClick(MenuItem item) {
+                        if (richTextEditor != null) {
+                            richTextEditor.getHtml(new Action1<String>() {
+                                @Override public void call(String html) {
+                                    if (getActivity() != null) {
+                                        new AlertDialog.Builder(getActivity())
+                                                .setMessage(html)
+                                                .show();
+                                    }
+                                }
+                            });
+                        }
+                        return true;
                     }
-                    return true;
                 })
                 .setShowAsAction(MenuItem.SHOW_AS_ACTION_ALWAYS);
     }

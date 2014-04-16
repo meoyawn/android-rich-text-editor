@@ -66,11 +66,16 @@ public class RichTextEditor extends FrameLayout {
     }
 
     @NotNull public Observable<String> getHtml() {
-        return Observable.create((Subscriber<? super String> subscriber) ->
-                getHtml(str -> {
-                    subscriber.onNext(str);
-                    subscriber.onCompleted();
-                }));
+        return Observable.create(new Observable.OnSubscribe<String>() {
+            @Override public void call(final Subscriber<? super String> subscriber) {
+                getHtml(new Action1<String>() {
+                    @Override public void call(String s) {
+                        subscriber.onNext(s);
+                        subscriber.onCompleted();
+                    }
+                });
+            }
+        });
     }
 
     public void setHtml(@NotNull String html) {
@@ -96,25 +101,30 @@ public class RichTextEditor extends FrameLayout {
     }
 
     class JSInterface {
-        @JavascriptInterface public void giveHtml(String html) {
-            post(() -> {
-                if (htmlCallback != null) {
-                    htmlCallback.call(html);
-                    htmlCallback = null;
+        @JavascriptInterface public void giveHtml(final String html) {
+            post(new Runnable() {
+                @Override public void run() {
+                    if (htmlCallback != null) {
+                        htmlCallback.call(html);
+                        htmlCallback = null;
+                    }
                 }
             });
         }
 
         @JavascriptInterface
-        public void onSelectionChanged(boolean bold, boolean italic, boolean underline,
-                                       boolean strikeThrough, boolean ordered, boolean unOrdered) {
-            post(() -> {
-                toggle(boldButton, bold);
-                toggle(italicButton, italic);
-                toggle(underlineButton, underline);
-                toggle(strikeThroughButton, strikeThrough);
-                toggle(listButton, ordered);
-                toggle(bulletButton, unOrdered);
+        public void onSelectionChanged(final boolean bold, final boolean italic,
+                                       final boolean underline, final boolean strikeThrough,
+                                       final boolean ordered, final boolean unOrdered) {
+            post(new Runnable() {
+                @Override public void run() {
+                    toggle(boldButton, bold);
+                    toggle(italicButton, italic);
+                    toggle(underlineButton, underline);
+                    toggle(strikeThroughButton, strikeThrough);
+                    toggle(listButton, ordered);
+                    toggle(bulletButton, unOrdered);
+                }
             });
         }
 
@@ -129,8 +139,12 @@ public class RichTextEditor extends FrameLayout {
             }
         }
 
-        @JavascriptInterface public void onFocusChanged(boolean focused) {
-            post(() -> buttonBar.setVisibility(focused ? VISIBLE : GONE));
+        @JavascriptInterface public void onFocusChanged(final boolean focused) {
+            post(new Runnable() {
+                @Override public void run() {
+                    buttonBar.setVisibility(focused ? VISIBLE : GONE);
+                }
+            });
         }
     }
 
